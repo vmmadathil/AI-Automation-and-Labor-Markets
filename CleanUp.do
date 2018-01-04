@@ -41,9 +41,6 @@ tab uhrswork, gen (uhrswork)
 tab migrate1d, gen (migrate1d)
 tab migplac1, gen (migplac1)
 
-drop hispan
-drop hispand
-
 replace perwt = perwt/100
 
 save "C:\Visakh\Research\Hamilton\usa_00002_Total_Set_Cleaned_Counties.dta", replace
@@ -55,3 +52,30 @@ rename STATE statefip
 rename COUNTYFIPS countyfips
 
 egen metid = group(MetArea)
+
+destring statefip, replace
+sort countyfips statefip
+
+save "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta", replace
+
+//The merging of the datasets
+use "C:\Visakh\Research\Hamilton\usa_00002_Total_Set_Cleaned_Counties.dta" 
+sort countyfips statefip
+merge countyfips statefip using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
+
+//Dropping unneeded variables to free up memory
+drop met2013
+drop met2013err
+drop city
+drop cityer
+drop region
+drop stateicp
+drop metro
+drop metarea
+drop metaread
+drop citypop
+drop puma
+drop homeland
+drop cntry
+drop hispan
+drop hispand

@@ -23,8 +23,15 @@ MSASet <- merge(county_match, MSA_Delination_2015, by=c("COUNTYFIPS", "STATE"))
 MSASet$`CBSA Code` <- NULL
 MSASet$`Metropolitan Division Code` <- NULL
 MSASet$`CSA Code` <- NULL
+MSASet$`Metropolitan/Micropolitan Statistical Area` <- NULL
+MSASet$`State Name` <- NULL
+MSASet$`County/County Equivalent` <- NULL
+MSASet$`Central/Outlying County` <- NULL
 
+#Ensuring all variables adhere to STATA's standards for variable names
 MSASet <- rename(MSASet, MetArea = `CBSA Title`)
+MSASet <- rename(MSASet, DivTitle = `Metropolitan Division Title`)
+MSASet <- rename(MSASet, CSA = `CSA Title`)
 
 #Writing the data to an .dta file
 write.dta(MSASet, "C:/Visakh/Research/Hamilton/Data/MSAtoCounties.dta")
