@@ -62,7 +62,8 @@ save "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta", replace
 use "C:\Visakh\Research\Hamilton\usa_00002_Total_Set_Cleaned_Counties.dta" 
 sort countyfips statefip
 merge countyfips statefip using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
-save "use "C:\Visakh\Research\Hamilton\usa_00002_Total_Set_Cleaned_Counties.dta", replace
+//saving master individual data set
+save "C:\Visakh\Research\Hamilton\usa_00002_Total_Set_Cleaned_Counties.dta", replace
 	
 
 //Dropping unneeded variables to free up memory
@@ -81,7 +82,6 @@ drop homeland
 drop cntry
 drop hispan
 drop hispand
-
 drop datanum
 drop dataserial
 drop serial
@@ -232,3 +232,9 @@ drop repwtp77
 drop repwtp78
 drop repwtp79
 drop repwtp80
+
+//mutliplying variables with the person weight
+foreach x of varlist _all {
+	replace `x' = (`x' * perwt)
+}
+
