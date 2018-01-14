@@ -232,9 +232,12 @@ drop repwtp77
 drop repwtp78
 drop repwtp79
 drop repwtp80
+drop _merge
+
+ds year statefip perwt absent StateName County MetArea DivTitle CSA metid, not
 
 //mutliplying variables with the person weight
-foreach x of varlist _all {
+foreach x of var `r(varlist)' {
 	replace `x' = (`x' * perwt)
 }
 
