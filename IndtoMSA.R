@@ -9,5 +9,9 @@ library(dplyr)
 indData <- read_dta(FILE_PATH)
 
 #multiply data with person weight
+indData[, c(4:1530)] <- 
+  lapply(indData[, c(4:1530)],
+         function(x, y) x * y,
+         y = indData$perwt)
 
-indData <- indData[, c("StateName", "County", "MetArea", "DivTitle", "CSA", "metid")]
+
