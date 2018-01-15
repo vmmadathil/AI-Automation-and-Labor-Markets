@@ -2,9 +2,8 @@
 # Author: Visakh Madathil
 
 library(haven)
-library(readxl)
 library(foreign)
-library(dplyr)
+library(plyr)
 
 indData <- read_dta(FILE_PATH)
 
@@ -15,3 +14,4 @@ indData[, c(4:1530)] <-
          y = indData$perwt)
 
 
+indData <- ddply(indData, "metid", numcolwise(sum))
