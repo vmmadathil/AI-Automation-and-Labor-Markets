@@ -50,9 +50,6 @@ save "C:\Visakh\Research\Hamilton\usa_00002_2005.dta"
 
 use "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
 
-rename statefip StateName
-rename STATE statefip
-rename COUNTYFIPS countyfips
 
 egen metid = group(MetArea)
 
@@ -287,22 +284,7 @@ replace perwt = perwt/100
 
 save "C:\Visakh\Research\Hamilton\usa_00002_2010.dta"
 
-use "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
 
-rename statefip StateName
-rename STATE statefip
-rename COUNTYFIPS countyfips
-
-egen metid = group(MetArea)
-
-destring statefip, replace
-sort countyfips statefip
-
-save "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta", replace
-
-//The merging of the datasets
-use "C:\Visakh\Research\Hamilton\usa_00002_2010.dta"
-sort countyfips statefip
 merge countyfips statefip using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
 //saving master individual data set
 save "C:\Visakh\Research\Hamilton\usa_00002_2010.dta", replace
@@ -527,22 +509,8 @@ replace perwt = perwt/100
 
 save "C:\Visakh\Research\Hamilton\usa_00002_2015.dta"
 
-use "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
-
-rename statefip StateName
-rename STATE statefip
-rename COUNTYFIPS countyfips
-
-egen metid = group(MetArea)
-
-destring statefip, replace
-sort countyfips statefip
-
-save "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta", replace
-
 //The merging of the datasets
 use "C:\Visakh\Research\Hamilton\usa_00002_2015.dta"
-sort countyfips statefip
 merge countyfips statefip using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta" 
 //saving master individual data set
 save "C:\Visakh\Research\Hamilton\usa_00002_2015.dta", replace
