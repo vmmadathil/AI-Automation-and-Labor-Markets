@@ -1,7 +1,6 @@
 /*
 This .DO file will format IPUMS population data into Metropolitan Statisical 
-Areas (MSAs) as per the 2015 OMB definitions. Brookings Robotics Data for each
-MSA is then appended.
+Areas (MSAs) as per the 2015 OMB definitions. 
 
 Author - Visakh Madathil
 */
