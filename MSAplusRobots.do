@@ -23,10 +23,12 @@ drop pumasupr
 drop appal 
 drop appld
 //finding the percentages of variables
+gen pop = i * i
 ds metid, not
 foreach x of var `r(varlist)' {
   replace `x' = (`x' / i)
   }
+ replace pop = sqrt(pop)
 //adding MSA names
 sort metid
 merge metid using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta"
@@ -36,7 +38,7 @@ sort metid
 quietly by metid: gen dup = cond(_N==1,0,_n)
 drop if dup>0
 order Totalindustrialrobots2010
-save "C:\Visakh\Research\Hamilton\Data\msadata2005.dta", replace
+save "C:\Visakh\Research\Hamilton\Data\MSARobots2005.dta", replace
 
 
 
@@ -47,12 +49,13 @@ use "C:\Visakh\Research\Hamilton\Data\msadata2010.dta"
 drop pumasupr
 drop appal 
 drop appld
-//finding the percentages of variables
+//finding the percentages of variables after creating population variable
+gen pop = i * i
 ds metid, not
 foreach x of var `r(varlist)' {
   replace `x' = (`x' / i)
   }
-  
+replace pop = sqrt(pop)  
 //adding MSA names
 sort metid
 merge metid using "C:\Visakh\Research\Hamilton\Data\MSAtoCounties.dta"
@@ -71,7 +74,7 @@ drop dup
 drop if Totalindustrialrobots2010 == .
 drop if perwt == .
 order Totalindustrialrobots2010
-save "C:\Visakh\Research\Hamilton\Data\msadata2010.dta", replace
+save "C:\Visakh\Research\Hamilton\Data\MSARobots2010.dta", replace
 
 
 
@@ -83,11 +86,12 @@ drop pumasupr
 drop appal 
 drop appld
 //finding the percentages of variables
+gen pop = i * i
 ds metid, not
 foreach x of var `r(varlist)' {
   replace `x' = (`x' / i)
   }
-
+replace pop = sqrt(pop)
  //adding MSA names
 sort metid
 drop _merge
@@ -108,4 +112,4 @@ drop if Totalindustrialrobots2015 == .
 drop if perwt == .
 
 order Totalindustrialrobots2015
-save "C:\Visakh\Research\Hamilton\Data\msadata2015.dta", replace
+save "C:\Visakh\Research\Hamilton\Data\MSARobots2015.dta", replace
