@@ -30,5 +30,15 @@ keep year region statefip county countyfips puma conspuma gq perwt relate relate
 save "`VMPath'\usa_00002", replace
 preserve
 
+drop if year == 2010 | year == 2015
+save "`VMPath'\usa_00002_2005.dta"
 
+restore 
+preserve
+drop if year == 2005 | year == 2015
+save "`VMPath'\usa_00002_2010.dta"
 
+restore
+preserve
+drop if year == 2005 | year == 2010
+save "`VMPath'\usa_00002_2015.dta"
