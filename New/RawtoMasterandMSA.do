@@ -24,21 +24,49 @@ replace race = 6 if hispan != 0
 label define race1 1 "White" 2 "African American/Black" 3 "American Indian" 4 "Asian" 5 "Other" 6 "Hispanic"
 label values race race1
 
-
+//keeping wanted variables
 keep year region statefip county countyfips puma conspuma gq perwt relate related sex age race hispan citizen yrsusa1 yrsusa2 school educd empstat empstatd labforce occ1990 ind1990 classwkr occsoc indnaics uhrswork inctot ftotinc incwage poverty mig*
+
+//merge MSA names 
+sort statefip countyfips
+merge statefip countyfips using "`VMPath'\Data\\MSAtoCounties.dta"
+
+//drop observations not in MSAs
+drop if _merge != 3
+
+//add robot data
+sort MetArea
+drop _merge
+merge MetArea using "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta"
+drop if _merge != 3
 
 save "`VMPath'\usa_00002", replace
 preserve
 
 drop if year == 2010 | year == 2015
-save "`VMPath'\usa_00002_2005.dta"
+save "`VMPath'\usa_00002_2005.dta", replace
 
 restore 
 preserve
 drop if year == 2005 | year == 2015
-save "`VMPath'\usa_00002_2010.dta"
+save "`VMPath'\usa_00002_2010.dta", replace
 
 restore
 preserve
 drop if year == 2005 | year == 2010
 save "`VMPath'\usa_00002_2015.dta"
+
+restore 
+save "`VMPath'\usa_00002_Master.dta"
+clear
+
+//Creating MSA level datasets
+use "`VMPath'\usa_00002_2005.dta"
+//creating categorical variables
+tab(educd), gen (educd)
+tab(sex), gen (sex)
+tab(race), gen (race)
+tab(empstatd), gen (empstatd)
+
+
+
