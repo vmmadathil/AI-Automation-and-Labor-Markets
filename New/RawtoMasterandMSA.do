@@ -8,7 +8,7 @@ local VMPath = "C:\Visakh\Research\Hamilton"
 
 
 //BEGINNING WITH ALL DATA
-use "`VMPath'\usa_00002"
+use "`VMPath'\usa_00002_RAW.dta"
 
 //Creating categorical variables for education
 replace educd = 61 if educd < 62
@@ -30,7 +30,6 @@ keep year region statefip county countyfips puma conspuma gq perwt relate relate
 //merge MSA names 
 sort statefip countyfips
 merge statefip countyfips using "`VMPath'\Data\\MSAtoCounties.dta"
-
 //drop observations not in MSAs
 drop if _merge != 3
 
@@ -39,6 +38,12 @@ sort MetArea
 drop _merge
 merge MetArea using "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta"
 drop if _merge != 3
+drop _merge
+
+//add CPI Data
+sort year
+merge year using "C:\Visakh\Research\Hamilton\Data\CPI.dta"
+drop _merge
 
 save "`VMPath'\usa_00002", replace
 preserve
