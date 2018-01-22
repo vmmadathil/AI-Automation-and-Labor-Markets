@@ -25,7 +25,10 @@ label define race1 1 "White" 2 "African American/Black" 3 "American Indian" 4 "A
 label values race race1
 
 //keeping wanted variables
-keep year region statefip wkswork1 county countyfips puma conspuma gq perwt relate related sex age race hispan citizen yrsusa1 yrsusa2 school educd empstat empstatd labforce occ1990 ind1990 classwkr occsoc indnaics uhrswork inctot ftotinc incwage poverty cpi99 mig*
+keep year region statefip wkswork2 county countyfips puma conspuma gq perwt relate related sex age race hispan citizen yrsusa1 yrsusa2 school educd empstat empstatd labforce occ1990 ind1990 classwkr occsoc indnaics uhrswork inctot ftotinc incwage poverty cpi99 mig*
+
+//cleaning data for weeks worked
+replace wkswork
 
 //merge MSA names 
 sort statefip countyfips
@@ -40,12 +43,8 @@ merge MetArea using "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta"
 drop if _merge != 3
 drop _merge
 
-//creating uhrwage
-gen uhrwage = ((incwage * cpi99)/(uhrswork * wkswork1))
 //changing perwt
 replace perwt = (perwt/100)
-
-
 
 save "`VMPath'\usa_00002"
 preserve
@@ -82,8 +81,8 @@ clear
 *********************************************************************************************************
 ********************************************************************************************************/
 
-
 //Creating MSA level datasets
+
 //Starting with 2005
 use "`VMPath'\usa_00002_2005.dta"
 
@@ -106,31 +105,47 @@ keep if age >= 25 & age <= 64
 drop if classwkr == 1
 drop if school == 2
 keep if empstat == 1
-collapse (mean) uhrwage incwage inctot ftotinc [w = perwt], by (year MetArea metid region statefip)
+collapse (mean) uhrswork incwage inctot ftotinc [w = perwt], by (cpi99 year MetArea metid region statefip)
 save "`VMPath'\Data\usa_00002_2005_wage.dta", replace
 
 restore
 preserve
 
-collapse (sum) sex* race* educ* citizen*, by (year MetArea metid region statefip)
-sort year MetArea metid region statefip
+keep if wkswork1 != .
+collapse (mean) wkswork [w = perwt], by (cpi99 year MetArea metid region statefip)
+sort cpi99 year MetArea metid region statefip
+save "`VMPath'\Data\usa_00002_2005_wkswork.dta", replace
+
+restore
+preserve 
+
+collapse (sum) sex* race* educ* citizen*, by (cpi99 year MetArea metid region statefip)
+sort cpi99 year MetArea metid region statefip
 save "`VMPath'\Data\usa_00002_2005_demo.dta", replace
 
 restore 
 
 keep if age >= 25 & age <= 64
-collapse (sum) empstat*, by (year MetArea metid region statefip)
-sort year MetArea metid region statefip
+collapse (sum) empstat*, by (cpi99 year MetArea metid region statefip)
+sort cpi99 year MetArea metid region statefip
 save "`VMPath'\Data\usa_00002_2005_lf.dta", replace
 
 //merging all into one dataset
 use "`VMPath'\Data\usa_00002_2005_wage.dta"
-sort year MetArea metid region statefip
-merge year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2005_demo.dta"
+sort cpi99 year MetArea metid region statefip
+merge cpi99 year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2005_demo.dta"
 drop _merge 
 
-sort year MetArea metid region statefip
-merge year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2005_lf.dta"
+sort cpi99 year MetArea metid region statefip
+merge cpi99 year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2005_lf.dta"
+drop _merge
+
+sort cpi99 year MetArea metid region statefip
+merge cpi99 year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2005_wkswork.dta"
+drop _merge
+
+gen uhrwage = ((incwage * cpi99)/(uhrswork * wkswork1))
+
 save "`VMPath'\Data\usa_00002_2005_all.dta", replace
 
 *********************************************************************************************************
@@ -151,7 +166,7 @@ tab(race), gen (race)
 tab(empstatd), gen (empstatd)
 tab (citizen), gen (citizen)
 
-//collapsing to MSA levels
+//collapsing to MSA levels with wanted variables
 preserve
 keep if age >= 25 & age <= 64
 drop if classwkr == 1
@@ -168,6 +183,7 @@ sort Totalindustrialrobots2010 year MetArea metid region statefip
 save "`VMPath'\Data\usa_00002_2010_demo.dta", replace
 
 restore 
+preserve
 
 keep if age >= 25 & age <= 64
 collapse (sum) empstat*, by (Totalindustrialrobots2010 year MetArea metid region statefip)
@@ -183,6 +199,7 @@ drop _merge
 sort Totalindustrialrobots2010 year MetArea metid region statefip
 merge Totalindustrialrobots2010 year MetArea metid region statefip using "`VMPath'\Data\usa_00002_2010_lf.dta"
 save "`VMPath'\Data\usa_00002_2010_all.dta", replace
+
 
 *********************************************************************************************************
 
