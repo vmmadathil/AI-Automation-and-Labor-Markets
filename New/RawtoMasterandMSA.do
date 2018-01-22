@@ -45,6 +45,9 @@ sort year
 merge year using "C:\Visakh\Research\Hamilton\Data\CPI.dta"
 drop _merge
 
+//creating uhrwage
+gen uhrwage = ((incwage * cpi99)/(uhrswork * wkswork1)
+
 save "`VMPath'\usa_00002", replace
 preserve
 
@@ -67,11 +70,36 @@ clear
 
 //Creating MSA level datasets
 use "`VMPath'\usa_00002_2005.dta"
+//dropping unwanted variables
+drop if perwt == 0
+drop if gq == 3 | gq == 4
+drop if relate == 13
+drop if empstatd == 14 | empstatd == 15
+drop if occ1990 == 905
 //creating categorical variables
 tab(educd), gen (educd)
 tab(sex), gen (sex)
 tab(race), gen (race)
 tab(empstatd), gen (empstatd)
+tab (citizen), gen (citizen)
 
+//collapsing to MSA levels
+preserve
+keep if age >= 25 & age <= 64
+drop if classwkr == 1
+drop if school == 2
+keep if empstat == 1
+collapse (mean) uhrwage incwage inctot ftotinc [w = perwt], by (year MetArea metid region statefip)
+
+restore
+preserve
+
+collapse (sum) sex* race* educ* citizen* by (year MetArea metid region statefip)
+
+restore 
+preserve
+
+keep if age >= 25 & age <= 64
+collapse (sum) empstat* by (year MetArea metid region statefip)
 
 
