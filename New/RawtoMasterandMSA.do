@@ -101,5 +101,3 @@ preserve
 
 keep if age >= 25 & age <= 64
 collapse (sum) empstat* by (year MetArea metid region statefip)
-
-
