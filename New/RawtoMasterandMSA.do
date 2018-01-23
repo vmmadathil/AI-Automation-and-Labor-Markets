@@ -27,18 +27,19 @@ label values race race1
 //keeping wanted variables
 keep year region statefip wkswork2 county countyfips puma conspuma gq perwt relate related sex age race hispan citizen yrsusa1 yrsusa2 school educd empstat empstatd labforce occ1990 ind1990 classwkr occsoc indnaics uhrswork inctot ftotinc incwage poverty cpi99 mig*
 
-//cleaning data for weeks worked
-replace wkswork
 
 //merge MSA names 
 sort statefip countyfips
-merge statefip countyfips using "`VMPath'\Data\\MSAtoCounties.dta"
+merge statefip countyfips using "`VMPath'\Data\MSAtoCounties.dta"
 //drop observations not in MSAs
 drop if _merge != 3
 
 //add robot data
-sort MetArea
-drop _merge
+use "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta"
+rename MetArea metarea
+sort metarea
+save "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta", replace
+use "`VMPath'\Data\usa_0005_RAW.dta"
 merge MetArea using "C:\Visakh\Research\Hamilton\Data\RobotsAndMSAs.dta"
 drop if _merge != 3
 drop _merge
@@ -54,7 +55,7 @@ drop Totalindustrialrobots2010
 drop Totalindustrialrobots2015
 drop AnnualizedpercentchangeCAGR
 drop Robotsperthousandworkers201
-save "`VMPath'\usa_00002_2005.dta"
+save "`VMPath'\usa_00002_2005.dta", replace
 *********************************************************************************************************
 restore 
 preserve
@@ -62,7 +63,7 @@ drop if year == 2005 | year == 2015
 drop Totalindustrialrobots2015
 drop AnnualizedpercentchangeCAGR
 drop Robotsperthousandworkers201
-save "`VMPath'\usa_00002_2010.dta"
+save "`VMPath'\usa_00002_2010.dta", replace
 *********************************************************************************************************
 restore
 preserve
@@ -70,10 +71,10 @@ drop if year == 2005 | year == 2010
 drop Totalindustrialrobots2010
 drop AnnualizedpercentchangeCAGR
 drop Robotsperthousandworkers201
-save "`VMPath'\usa_00002_2015.dta"
+save "`VMPath'\usa_00002_2015.dta", replace
 *********************************************************************************************************
 restore 
-save "`VMPath'\usa_00002_Master.dta"
+save "`VMPath'\usa_00002_Master.dta", replace
 clear
 
 
