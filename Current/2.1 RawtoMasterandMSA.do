@@ -31,9 +31,11 @@ rename met2013 MetroArea //changing the variable name back for the sake of consi
 //Creating categorical variables for education
 replace educd = 61 if educd < 62
 replace educd = 63 if educd == 62
-replace educd = 100 if educd > 63
+replace educd = 100 if educd > 63 & educd < 100
+replace educd = 101 if educd > 101
 label define educd1 61 "Less than HS" 63 "HS graduate or equivalent" 100 "Some College" 101 "Bachelors Degree or Beyond" 
 label values educd educd1
+
 
 //Creating categorical variables for race
 replace race = 4 if race == 4 | race == 5 | race == 6
@@ -54,6 +56,8 @@ replace wkswork2 = 51 if wkswork2 == 6
 
 save "`path'\usa_00002", replace
 preserve
+
+
 *********************************************************************************************************
 drop if year == 2010 | year == 2015
 drop Totalindustrialrobots2010
@@ -81,8 +85,6 @@ save "`path'\usa_00002_2015.dta", replace
 restore 
 save "`path'\usa_00002_Master.dta", replace
 clear
-
-
 /********************************************************************************************************
 *********************************************************************************************************
 ********************************************************************************************************/
@@ -110,6 +112,9 @@ save "`path'\usa_00002_2005.dta", replace
 //collapsing to MSA levels
 preserve
 keep if age >= 25 & age <= 64
+
+
+
 drop if classwkr == 1
 drop if school == 2
 keep if empstat == 1
@@ -133,7 +138,7 @@ sort cpi99 year MetroArea region statefip
 save "`path'\usa_00002_2005_lf.dta", replace
 
 //merging all into one dataset
-use "`path''\usa_00002_2005_wage.dta"
+use "`path'\usa_00002_2005_wage.dta"
 sort cpi99 year MetroArea region statefip
 merge cpi99 year MetroArea region statefip using "`path'\usa_00002_2005_demo.dta"
 drop _merge 
@@ -143,7 +148,7 @@ merge cpi99 year MetroArea region statefip using "`path'\usa_00002_2005_lf.dta"
 drop _merge
 
 
-save "``path'\usa_00002_2005_all.dta", replace
+save "`path'\usa_00002_2005_all.dta", replace
 
 *********************************************************************************************************
 
@@ -165,7 +170,7 @@ drop if gq == 3 | gq == 4
 drop if relate == 13
 drop if empstatd == 14 | empstatd == 15
 drop if occ1990 == 905
-save "`path'\usa_00002_`y’.dta"
+save "`path'\usa_00002_`y’.dta", replace
 
 //collapsing to MSA levels with wanted variables
 preserve
@@ -197,7 +202,7 @@ merge Totalindustrialrobots`y’ year MetroArea region statefip using "`path'\us
 drop _merge 
 
 sort Totalindustrialrobots`y’ year MetroArea region statefip
-merge Totalindustrialrobots`y’ year MetroArea region statefip using "`path'\usa_00002_Totalindustrialrobots`y’_lf.dta"
+merge Totalindustrialrobots`y’ year MetroArea region statefip using "`path'\usa_00002_`y’_lf.dta"
 destring Totalindustrialrobots`y’, replace
 save "`VMPath'\Data\usa_00002_`y’_all.dta", replace
  
